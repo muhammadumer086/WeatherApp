@@ -29,6 +29,16 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## Architecture (MVVM)
+
+- Organize product code by feature under `src/features/<feature>/`.
+- `models/` contains data contracts and domain types. Keep models independent of React and UI code.
+- `view-models/` contains hooks and providers that own screen state, derived values, user actions, and orchestration.
+- `views/` contains screens and feature-specific UI. Views render ViewModel state and forward user events; do not fetch or persist data directly.
+- `services/` contains API, storage, and other external I/O used by ViewModels.
+- Keep files in `src/app/` thin: they should define routing/layout or re-export a feature View.
+- Put only genuinely reusable UI in `src/components/`; keep feature-specific components beside their View.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.

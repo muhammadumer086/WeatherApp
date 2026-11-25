@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import * as SplashScreen from 'expo-splash-screen';
 import { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -9,6 +9,7 @@ const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
 
 export function AnimatedSplashOverlay() {
+  const colorScheme = useColorScheme();
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
@@ -33,7 +34,15 @@ export function AnimatedSplashOverlay() {
     },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const content = (
+    <View style={styles.splashContent}>
+      <View style={styles.splashMarkContainer}>
+        <Image style={styles.splashMark} source={require('@/assets/images/skycast-mark.png')} />
+      </View>
+      <Text style={styles.splashTitle}>SkyCast</Text>
+      <Text style={styles.splashSubtitle}>Weather around you</Text>
+    </View>
+  );
 
   return animate ? (
     <Animated.View
@@ -43,8 +52,8 @@ export function AnimatedSplashOverlay() {
           scheduleOnRN(setVisible, false);
         }
       })}
-      style={styles.splashOverlay}>
-      {image}
+      style={[styles.splashOverlay, colorScheme === 'dark' && styles.splashOverlayDark]}>
+      {content}
     </Animated.View>
   ) : (
     <View
@@ -53,8 +62,8 @@ export function AnimatedSplashOverlay() {
           setAnimate(true);
         });
       }}
-      style={styles.splashOverlay}>
-      {image}
+      style={[styles.splashOverlay, colorScheme === 'dark' && styles.splashOverlayDark]}>
+      {content}
     </View>
   );
 }
@@ -104,7 +113,7 @@ export function AnimatedIcon() {
 
       <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
       <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+        <Image style={styles.image} source={require('@/assets/images/skycast-mark.png')} />
       </Animated.View>
     </View>
   );
@@ -129,7 +138,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 76,
-    height: 71,
+    height: 76,
   },
   background: {
     borderRadius: 40,
@@ -140,9 +149,46 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    backgroundColor: '#087BEA',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
+  },
+  splashOverlayDark: {
+    backgroundColor: '#061A33',
+  },
+  splashContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  splashMarkContainer: {
+    width: 184,
+    height: 184,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 52,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.16)',
+  },
+  splashMark: {
+    width: 166,
+    height: 166,
+  },
+  splashTitle: {
+    color: '#FFFFFF',
+    fontSize: 34,
+    lineHeight: 41,
+    fontWeight: '800',
+    letterSpacing: -1,
+    marginTop: 18,
+  },
+  splashSubtitle: {
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+    letterSpacing: 0.8,
+    marginTop: 2,
   },
 });
